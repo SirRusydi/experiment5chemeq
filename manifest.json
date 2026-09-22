@@ -1,0 +1,9 @@
+{
+  "name": "EquiLab SK015 \u2013 Experiment 5",
+  "short_name": "EquiLab SK015",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#16324F",
+  "icons": []
+}

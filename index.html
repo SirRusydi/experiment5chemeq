@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16324F">
+<title>EquiLab SK015 — Experiment 5</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+  --navy:#16324F; --blue:#246B9E; --teal:#2A9D8F; --gold:#E9C46A;
+  --bg:#F5F7FA; --card:#FFFFFF; --text:#1F2937; --muted:#64748B;
+  --line:#D9E0E7; --danger:#B42318; --success:#18794E;
+  --radius:18px; --shadow:0 8px 24px rgba(22,50,79,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+header{position:sticky;top:0;z-index:20;background:rgba(22,50,79,.97);color:#fff;padding:14px 18px}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.brand-icon{font-size:25px}
+.header-actions{display:flex;gap:8px}
+.icon-btn{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:12px;padding:8px 10px}
+main{max-width:1100px;margin:auto;padding:18px 16px 100px}
+.hero{background:linear-gradient(135deg,#16324F,#246B9E);color:#fff;border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 6px;font-size:clamp(1.7rem,4vw,2.5rem)}
+.hero p{margin:4px 0;color:rgba(255,255,255,.88)}
+.progress-wrap{margin-top:18px}
+.progress-label{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:7px}
+.progress{height:10px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden}
+.progress>span{display:block;height:100%;background:#fff;border-radius:99px;transition:width .3s}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h2,.card h3{margin-top:0}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 12px}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#EAF2F8;color:var(--navy);padding:5px 10px;font-size:.78rem;font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:750;transition:.15s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-secondary{background:#EAF2F8;color:var(--navy)}
+.btn-success{background:var(--teal);color:#fff}
+.btn-saved{background:#18794E!important;color:#fff!important;border-color:#18794E!important}
+.btn-saved::before{content:'✓ ';font-weight:900}
+.field-correct{border-color:#18794E!important;background:#F5FCF8!important}
+.field-incorrect{border-color:#B42318!important;background:#FFF7F7!important}
+.feedback{margin-top:8px;padding:10px 12px;border-radius:10px;font-size:.9rem}
+.feedback.correct{background:#EEF8F5;color:#166534;border:1px solid #BFE4D2}
+.feedback.incorrect{background:#FFF1F2;color:#9F1239;border:1px solid #FECDD3}
+.feedback.hint{background:#FFF9E8;color:#854D0E;border:1px solid #FDE68A}
+.locked{opacity:.58;pointer-events:none}
+.calc-step{border:2px solid #E5EAF0;border-radius:16px;padding:16px;margin:12px 0}
+.calc-step.active{border-color:var(--blue)}
+.calc-step.complete{border-color:#BFE4D2;background:#F5FCF8}
+.step-check{font-size:.82rem;font-weight:800;color:var(--success);margin-left:7px}
+
+.btn-danger{background:#FDECEC;color:var(--danger)}
+.btn-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.nav{display:flex;gap:7px;overflow:auto;padding:12px 0;position:sticky;top:64px;z-index:15;background:var(--bg)}
+.nav button{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--muted);padding:9px 13px;border-radius:999px;font-weight:700}
+.nav button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.view{display:none}.view.active{display:block}
+.step{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.step-no{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#EAF2F8;color:var(--navy);font-weight:800;flex:0 0 auto}
+.callout{border-left:4px solid var(--gold);background:#FFF9E8;padding:12px 14px;border-radius:0 12px 12px 0;margin:12px 0}
+.equation{background:#F7F8FA;border:1px dashed #CBD5E1;border-radius:14px;padding:14px;text-align:center;font-size:1.08rem;margin:12px 0;font-family:Georgia,serif}
+.form-group{margin:12px 0}
+label{display:block;font-weight:750;margin-bottom:6px}
+input,textarea,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;outline:none}
+textarea{min-height:105px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(36,107,158,.12)}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choice{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;text-align:center;font-weight:700}
+.choice.selected{border-color:var(--blue);background:#EAF2F8;color:var(--navy)}
+.task-card{border:2px solid #E5EAF0;border-radius:16px;padding:15px;margin:12px 0}
+.task-card.done{border-color:#BFE4D2;background:#F5FCF8}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:560px;background:#fff}
+th,td{padding:11px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:#F1F4F7}
+.calc-result{background:#EEF8F5;border:1px solid #BFE4D2;border-radius:14px;padding:13px;font-weight:750}
+.report-preview{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;min-height:300px}
+.report-preview h1,.report-preview h2{color:var(--navy)}
+.footer-note{text-align:center;color:var(--muted);font-size:.82rem;margin-top:30px}
+.hint{background:#F4F8FF;border:1px solid #C9DDF1;border-radius:14px;padding:12px 14px;margin-top:10px;display:none}.hint.show{display:block}.hint strong{color:var(--navy)}
+.check-options{display:grid;gap:8px}.check-option{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;text-align:left}.check-option.correct{border-color:#9AD3B5;background:#F2FBF6}.check-option.incorrect{border-color:#E9A5A5;background:#FFF5F5}
+.feedback{margin-top:10px;font-weight:700;display:none}.feedback.show{display:block}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1F2937;color:#fff;padding:11px 15px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:100}
+@media(max-width:700px){
+  main{padding:12px 12px 90px}
+  header{padding:12px}
+  .hero{padding:20px}
+  .grid{grid-template-columns:1fr}
+  .choice-grid{grid-template-columns:1fr}
+  .nav{top:58px}
+  .card{padding:15px}
+  .btn{width:auto}
+}
+@media(min-width:900px){
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+}
+@media print{
+  header,.nav,.btn-row,.hero,.footer-note{display:none!important}
+  body{background:#fff}
+  main{padding:0;max-width:none}
+  .view{display:none!important}
+  #report.view.active{display:block!important}
+  .card,.report-preview{box-shadow:none;border:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="brand-icon">⚗️</span><span>EquiLab SK015</span></div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="resetApp()" title="Reset experiment">↻ Reset</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Experiment 5: Chemical Equilibrium</h1>
+    <p>Interactive practical companion for SK015</p>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Experiment progress</span><strong id="progressText">0%</strong></div>
+      <div class="progress"><span id="progressBar" style="width:0%"></span></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="active" data-view="home">Overview</button>
+    <button data-view="partA">Part A</button>
+    <button data-view="partB">Part B</button>
+    <button data-view="partC">Part C</button>
+    <button data-view="report">Report</button>
+  </div>
+
+  <section id="home" class="view active">
+    <div class="section-title"><h2>Start here</h2><span class="badge">V1 Student Mode</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>🎯 Objectives</h3>
+        <ol>
+          <li>To study the effect of concentration and temperature on chemical equilibrium.</li>
+          <li>To determine the equilibrium constant, <i>K</i><sub>c</sub>, of a reaction.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>🧠 Quick concept</h3>
+        <p>A system at equilibrium is dynamic. When concentration or temperature is changed, the equilibrium position may shift to counteract the disturbance.</p>
+        <div class="equation">Reactants ⇌ Products</div>
+      </div>
+    </div>
+
+    <div class="section-title"><h2>🧠 Quick readiness check</h2><span class="badge">Try before the practical</span></div>
+    <div class="card">
+      <p><strong>A system is at equilibrium when:</strong></p>
+      <div class="check-options">
+        <button class="check-option" onclick="checkAnswer(this,false,'check1')">The concentrations of reactants and products are equal.</button>
+        <button class="check-option" onclick="checkAnswer(this,true,'check1')">The forward and reverse reaction rates are equal.</button>
+        <button class="check-option" onclick="checkAnswer(this,false,'check1')">The reaction has stopped.</button>
+      </div>
+      <div id="check1" class="feedback"></div>
+    </div>
+
+    <div class="section-title"><h2>Before you begin</h2></div>
+    <div class="card">
+      <div class="callout"><strong>Lab safety:</strong> Follow your laboratory's safety rules and your lecturer's instructions. Handle acids, bases and metal salt solutions appropriately.</div>
+      <div class="step"><div class="step-no">1</div><div><strong>Prepare your apparatus and reagents.</strong><div class="muted small">Use the quantities and concentrations specified by your laboratory manual.</div></div></div>
+      <div class="step"><div class="step-no">2</div><div><strong>Work through the experiment in order.</strong><div class="muted small">Record observations as they occur rather than relying on memory.</div></div></div>
+      <div class="step"><div class="step-no">3</div><div><strong>Use the app as your digital laboratory notebook.</strong><div class="muted small">Your entries are saved in this browser automatically.</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="showView('partA')">Start Part A →</button>
+    </div>
+  </section>
+
+  <section id="partA" class="view">
+    <div class="section-title"><h2>Part A — Effect of Concentration</h2><span class="badge">Le Chatelier</span></div>
+    <div class="card">
+      <p>The thiocyanatoiron(III) complex is formed when Fe<sup>3+</sup> reacts with SCN<sup>−</sup>.</p>
+      <div class="equation">Fe<sup>3+</sup>(aq) + 2SCN<sup>−</sup>(aq) ⇌ [Fe(SCN)<sub>2</sub>]<sup>+</sup>(aq)</div>
+      <p class="small muted">The manual describes the Fe<sup>3+</sup> solution as yellowish-brown and the complex as blood-red.</p>
+    </div>
+
+    <div class="card">
+      <h3>Step A1 — Prepare the equilibrium mixture</h3>
+      <p>Place <strong>2 mL of 0.1 M Fe(NO<sub>3</sub>)<sub>3</sub></strong> solution and <strong>3 mL of 0.1 M KSCN</strong> solution into a 100 mL beaker.</p>
+      <p>Then add <strong>50 mL distilled water</strong> and mix.</p>
+      <button class="btn btn-success" onclick="completeStepButton('a1',this)">✓ Step completed</button>
+    </div>
+
+    <div class="card">
+      <h3>Step A2 — Divide the mixture</h3>
+      <p>Place approximately <strong>5 mL</strong> of the solution into each of four test tubes.</p>
+      <p class="muted small">Test tube IV is the control.</p>
+      <button class="btn btn-success" onclick="completeStepButton('a2',this)">✓ Step completed</button>
+    </div>
+
+    <div class="section-title"><h2>Observe and interpret</h2></div>
+    <div class="task-card" id="taskA1">
+      <h3>🧪 Test tube I</h3>
+      <p><strong>Treatment:</strong> Add 1 mL of 0.1 M Fe(NO<sub>3</sub>)<sub>3</sub>.</p>
+      <div class="form-group"><label>Prediction — equilibrium shift</label>
+        <div class="choice-grid" data-choice="predA1">
+          <button class="choice" onclick="choose(this,'predA1','Forward')">Forward</button>
+          <button class="choice" onclick="choose(this,'predA1','Reverse')">Reverse</button>
+          <button class="choice" onclick="choose(this,'predA1','No shift')">No shift</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Observation</label><textarea id="obsA1" placeholder="Record the colour or other visible change..."></textarea></div>
+      <div class="form-group"><label>Interpretation</label><textarea id="intA1" placeholder="Explain the observation using Le Chatelier's Principle..."></textarea></div>
+      <button class="btn btn-primary" onclick="saveTask('A1',this)">Save Test I</button>
+    </div>
+
+    <div class="task-card" id="taskA2">
+      <h3>🧪 Test tube II</h3>
+      <p><strong>Treatment:</strong> Add 1 mL of 0.1 M KSCN.</p>
+      <div class="form-group"><label>Prediction — equilibrium shift</label>
+        <div class="choice-grid" data-choice="predA2">
+          <button class="choice" onclick="choose(this,'predA2','Forward')">Forward</button>
+          <button class="choice" onclick="choose(this,'predA2','Reverse')">Reverse</button>
+          <button class="choice" onclick="choose(this,'predA2','No shift')">No shift</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Observation</label><textarea id="obsA2" placeholder="Record the colour or other visible change..."></textarea></div>
+      <div class="form-group"><label>Interpretation</label><textarea id="intA2" placeholder="Explain the observation using Le Chatelier's Principle..."></textarea></div>
+      <button class="btn btn-primary" onclick="saveTask('A2',this)">Save Test II</button>
+    </div>
+
+    <div class="task-card" id="taskA3">
+      <h3>🧪 Test tube III</h3>
+      <p><strong>Treatment:</strong> Add 6–8 drops of 2.5 M NaOH.</p>
+      <div class="form-group"><label>Prediction — equilibrium shift</label>
+        <div class="choice-grid" data-choice="predA3">
+          <button class="choice" onclick="choose(this,'predA3','Forward')">Forward</button>
+          <button class="choice" onclick="choose(this,'predA3','Reverse')">Reverse</button>
+          <button class="choice" onclick="choose(this,'predA3','No shift')">No shift</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Observation</label><textarea id="obsA3" placeholder="Record the colour/precipitate or other visible change..."></textarea></div>
+      <button class="btn btn-secondary" onclick="toggleHint('hintA3')">💡 Need a hint?</button><div id="hintA3" class="hint"><strong>Hint:</strong> Think about what happens to Fe³⁺ when OH⁻ is added, and how removing a species affects the equilibrium.</div>
+      <div class="form-group"><label>Interpretation</label><textarea id="intA3" placeholder="Explain the observation using equilibrium principles..."></textarea></div>
+      <button class="btn btn-primary" onclick="saveTask('A3',this)">Save Test III</button>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="showView('partB')">Continue to Part B →</button></div>
+  </section>
+
+  <section id="partB" class="view">
+    <div class="section-title"><h2>Part B — Effect of Temperature</h2><span class="badge">Temperature</span></div>
+    <div class="card">
+      <div class="equation">[Co(H<sub>2</sub>O)<sub>6</sub>]<sup>2+</sup>(aq) + 4Cl<sup>−</sup>(aq) ⇌ [CoCl<sub>4</sub>]<sup>2−</sup>(aq) + 6H<sub>2</sub>O(l)</div>
+      <p class="small muted">The manual describes the hydrated cobalt(II) complex as pink and the tetrachlorocobaltate(II) complex as blue.</p>
+    </div>
+
+    <div class="card">
+      <h3>Prepare the temperature system</h3>
+      <ol>
+        <li>Place 2 mL of 0.2 M CoCl<sub>2</sub> solution into a conical flask.</li>
+        <li>Add 20 mL of 6 M HCl and swirl.</li>
+        <li>A purple solution should form, indicating a mixture of pink and blue species.</li>
+        <li>Divide the purple solution into three test tubes.</li>
+      </ol>
+      <button class="btn btn-success" onclick="completeStepButton('bprep',this)">✓ Preparation completed</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>🌡️ Test tube I</h3>
+        <p>Leave at room temperature.</p>
+        <textarea id="obsB1" placeholder="Observation..."></textarea>
+        <button class="btn btn-primary" onclick="saveB('B1',this)">Save</button>
+      </div>
+      <div class="card">
+        <h3>❄️ Test tube II</h3>
+        <p>Place in an ice bath.</p>
+        <textarea id="obsB2" placeholder="Observation at low temperature..."></textarea>
+        <div class="form-group"><label>After returning to room temperature</label><textarea id="obsB2rt" placeholder="Observation..."></textarea></div>
+        <button class="btn btn-primary" onclick="saveB('B2',this)">Save</button>
+      </div>
+      <div class="card">
+        <h3>🔥 Test tube III</h3>
+        <p>Place in a water bath at 80–90 °C.</p>
+        <textarea id="obsB3" placeholder="Observation at high temperature..."></textarea>
+        <div class="form-group"><label>After returning to room temperature</label><textarea id="obsB3rt" placeholder="Observation..."></textarea></div>
+        <button class="btn btn-primary" onclick="saveB('B3',this)">Save</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🧠 Evidence check</h3>
+      <p>Compare the colour observed at low and high temperature. Which observation should be used as evidence for the direction favoured by heating?</p>
+      <textarea id="evidenceB" placeholder="State the evidence from your observations..."></textarea>
+      <button class="btn btn-secondary" onclick="saveField('evidenceB')">Save evidence</button>
+    </div>
+
+    <div class="card">
+      <h3>💭 Discussion prompt</h3>
+      <p>Based on your observations, determine whether the forward reaction is exothermic or endothermic and explain your reasoning.</p>
+      <textarea id="discussionB" placeholder="Write your explanation..."></textarea>
+      <button class="btn btn-primary" onclick="saveField('discussionB',this)">Save discussion</button>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="showView('partC')">Continue to Part C →</button></div>
+  </section>
+
+  <section id="partC" class="view">
+    <div class="section-title"><h2>Part C — Determination of K<sub>c</sub></h2><span class="badge">Guided calculation</span></div>
+
+    <div class="card">
+      <div class="equation">SbCl<sub>3</sub>(aq) + H<sub>2</sub>O(l) ⇌ SbOCl(s) + 2HCl(aq)</div>
+      <div class="equation">K<sub>c</sub> = [HCl]<sup>2</sup> / [SbCl<sub>3</sub>]</div>
+      <div class="callout"><strong>How this calculation works:</strong> the 5.00 mL initial solution is diluted by the distilled water added. The equilibrium concentrations are obtained using the dilution equation, then used in the K<sub>c</sub> expression.</div>
+    </div>
+
+    <div class="card">
+      <h3>🧪 Step-by-step experimental procedure</h3>
+      <p class="muted small">Complete each laboratory step before moving to the calculation. The procedure follows the supplied Experiment 5 manual.</p>
+
+      <div class="step">
+        <div class="step-no">1</div>
+        <div>
+          <strong>Transfer the SbCl<sub>3</sub> solution</strong>
+          <p>Using a pipette, transfer <strong>5.0 mL of 0.5 M SbCl<sub>3</sub> in 6 M HCl</strong> into a conical flask.</p>
+          <button id="cStep1Btn" class="btn btn-success" onclick="completeStepButton('c1',this)">Step completed</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-no">2</div>
+        <div>
+          <strong>Add distilled water</strong>
+          <p>Carefully add distilled water from a burette into the conical flask while the flask is swirled.</p>
+          <button id="cStep2Btn" class="btn btn-success" onclick="completeStepButton('c2',this)">Step completed</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-no">3</div>
+        <div>
+          <strong>Identify the endpoint</strong>
+          <p>Continue adding distilled water until a <strong>faint white precipitate</strong> is obtained.</p>
+          <div class="callout"><strong>Observation cue:</strong> the endpoint is the appearance of a faint white precipitate.</div>
+          <button id="cStep3Btn" class="btn btn-success" onclick="completeStepButton('c3',this)">Step completed</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-no">4</div>
+        <div>
+          <strong>Record the burette readings</strong>
+          <p>Record the initial and final burette readings below.</p>
+          <button id="cStep4Btn" class="btn btn-success" onclick="completeStepButton('c4',this)">Step completed</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-step" id="calcStep1">
+      <h3>📏 Calculation Step 1 — Volume of water added</h3>
+      <p>Enter the initial and final burette readings.</p>
+      <div class="two-col">
+        <div class="form-group"><label>Initial reading / mL</label><input type="number" step="0.01" id="initialBurette" oninput="calcVolume()"></div>
+        <div class="form-group"><label>Final reading / mL</label><input type="number" step="0.01" id="finalBurette" oninput="calcVolume()"></div>
+      </div>
+      <div class="equation">V<sub>water</sub> = V<sub>final</sub> − V<sub>initial</sub></div>
+      <div class="calc-result">Volume of water added: <span id="waterVolume">—</span> mL</div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="checkVolume(this)">✓ Check volume</button><button class="btn btn-secondary" onclick="showHint('volumeHint')">💡 Hint</button></div>
+      <div id="volumeHint" class="feedback hint" style="display:none">Subtract the initial burette reading from the final burette reading.</div>
+      <div id="volumeFeedback"></div>
+    </div>
+
+    <div class="calc-step" id="calcStep2">
+      <h3>🧪 Calculation Step 2 — Final volume of solution</h3>
+      <p>The initial solution volume is <strong>5.00 mL</strong>. Add the volume of water calculated in Step 1.</p>
+      <div class="equation">V<sub>final</sub> = 5.00 mL + V<sub>water</sub></div>
+      <div class="calc-result">Final volume: <span id="finalVolumeDisplay">—</span> mL</div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="checkFinalVolume(this)">✓ Confirm final volume</button><button class="btn btn-secondary" onclick="showHint('finalVolumeHint')">💡 Hint</button></div>
+      <div id="finalVolumeHint" class="feedback hint" style="display:none">Use the original 5.00 mL solution volume plus the water added from Step 1.</div>
+      <div id="finalVolumeFeedback"></div>
+    </div>
+
+    <div class="calc-step" id="calcStep3">
+      <h3>🧮 Calculation Step 3 — Equilibrium concentrations</h3>
+      <p>Use the dilution equation:</p>
+      <div class="equation">C<sub>1</sub>V<sub>1</sub> = C<sub>2</sub>V<sub>2</sub></div>
+      <p class="small muted">For this experiment, use the initial concentrations <strong>6.00 M HCl</strong> and <strong>0.500 M SbCl<sub>3</sub></strong>, with an initial volume of <strong>5.00 mL</strong>.</p>
+
+      <div class="task-card">
+        <h3>HCl</h3>
+        <p><strong>6.00 × 5.00 = [HCl]<sub>eq</sub> × V<sub>final</sub></strong></p>
+        <div class="form-group"><label>Enter [HCl]<sub>eq</sub> / M</label><input id="calcHCl" inputmode="decimal" placeholder="e.g. 2.6866"></div>
+        <div id="hclFeedback"></div>
+      </div>
+
+      <div class="task-card">
+        <h3>SbCl<sub>3</sub></h3>
+        <p><strong>0.500 × 5.00 = [SbCl<sub>3</sub>]<sub>eq</sub> × V<sub>final</sub></strong></p>
+        <div class="form-group"><label>Enter [SbCl<sub>3</sub>]<sub>eq</sub> / M</label><input id="calcSbCl3" inputmode="decimal" placeholder="e.g. 0.2239"></div>
+        <div id="sbcl3Feedback"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkConcentrations(this)">✓ Check concentrations</button>
+        <button class="btn btn-secondary" onclick="showHint('concHint')">💡 Hint</button>
+      </div>
+      <div id="concHint" class="feedback hint" style="display:none">For each species, rearrange C₁V₁ = C₂V₂ to C₂ = (C₁V₁) / V₂.</div>
+      <div id="concFeedback"></div>
+    </div>
+
+    <div class="calc-step" id="calcStep4">
+      <h3>⚗️ Calculation Step 4 — Determine K<sub>c</sub></h3>
+      <p>Use the equilibrium expression from the experiment:</p>
+      <div class="equation">K<sub>c</sub> = [HCl]<sup>2</sup> / [SbCl<sub>3</sub>]</div>
+      <div class="form-group"><label>Enter K<sub>c</sub></label><input id="calcKc" inputmode="decimal" placeholder="Enter your calculated value"></div>
+      <div class="form-group"><label>Show your working</label><textarea id="calcWorking" placeholder="Substitute your calculated equilibrium concentrations into the Kc expression..."></textarea></div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="checkKc(this)">✓ Check Kc</button><button class="btn btn-secondary" onclick="showHint('kcHint')">💡 Hint</button></div>
+      <div id="kcHint" class="feedback hint" style="display:none">Square your calculated [HCl] value, then divide by your calculated [SbCl₃] value.</div>
+      <div id="kcFeedback"></div>
+    </div>
+
+    <div class="card">
+      <h3>💭 Discussion prompt</h3>
+      <p>Explain why the concentration of a pure liquid and a solid is excluded from the equilibrium constant expression for a heterogeneous system.</p>
+      <textarea id="discussionC" placeholder="Write your explanation..."></textarea>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveField('discussionC',this)">Save discussion</button></div>
+    </div>
+
+    <div class="btn-row"><button class="btn btn-primary" onclick="showView('report')">Build Lab Report →</button></div>
+  </section>
+  <section id="report" class="view">
+    <div class="section-title"><h2>📝 Lab Report</h2><span class="badge">Editable</span></div>
+    <div class="card">
+      <h3>Student details</h3>
+      <div class="two-col">
+        <div class="form-group"><label>Name</label><input id="studentName"></div>
+        <div class="form-group"><label>Matrix No.</label><input id="matrixNo"></div>
+        <div class="form-group"><label>Group / Practical Group</label><input id="studentGroup"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="reportDate"></div>
+      </div>
+      <button class="btn btn-secondary" onclick="saveStudent(this)">Save details</button>
+    </div>
+
+    <div class="card">
+      <h3>Report contents</h3>
+      <p class="muted small">The generated report follows the requested structure: Title, Objectives, simplified Introduction, passive-voice Procedure, Results, Calculations, Discussions and Conclusion.</p>
+      <div class="form-group"><label>Conclusion</label><textarea id="conclusion" placeholder="Write a concise conclusion based on the objectives and your experimental findings."></textarea></div>
+      <button class="btn btn-secondary" onclick="saveField('conclusion',this)">Save conclusion</button>
+    </div>
+
+    <div class="card">
+      <h3>Preview</h3>
+      <div id="reportPreview" class="report-preview"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="downloadDocx()">📄 Generate DOCX</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+      <p class="footer-note">DOCX generation is fully local and does not require an internet connection or external library.</p>
+    </div>
+  </section>
+
+  <p class="footer-note">EquiLab SK015 V1 • Experiment 5: Chemical Equilibrium</p>
+</main>
+<div id="toast" class="toast"></div>
+</div>
+
+<script>
+const KEY='equilab-sk015-v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+state.steps=state.steps||{};
+state.choices=state.choices||{};
+state.obs=state.obs||{};
+state.int=state.int||{};
+state.b=state.b||{};
+state.meta=state.meta||{};
+state.calc=state.calc||{};
+function persist(){localStorage.setItem(KEY,JSON.stringify(state)); updateProgress(); updateReport(); showToast('Saved on this device');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display='none',1800)}
+function showView(id){
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+ window.scrollTo({top:0,behavior:'smooth'});
+ updateReport();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+function markSavedButton(btn, text='Saved'){
+ if(!btn) return;
+ btn.classList.add('btn-saved');
+ btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
+ btn.textContent = '✓ ' + text;
+}
+function restoreSavedButtons(){
+ document.querySelectorAll('.btn-saved').forEach(btn=>{
+   if(btn.dataset.originalText) btn.textContent=btn.dataset.originalText;
+   btn.classList.remove('btn-saved');
+ });
+}
+function completeStepButton(k,btn){
+ state.steps[k]=true;
+ markSavedButton(btn,'Completed');
+ persist();
+}
+function choose(el,key,val){
+ document.querySelectorAll(`[data-choice="${key}"] .choice`).forEach(x=>x.classList.remove('selected'));
+ el.classList.add('selected'); state.choices[key]=val; persist();
+}
+function saveTask(k,btn){
+ const n=k;
+ state.obs[n]=document.getElementById('obs'+n).value;
+ state.int[n]=document.getElementById('int'+n).value;
+ persist();
+ document.getElementById('task'+n).classList.add('done');
+ markSavedButton(btn,'Saved');
+}
+function saveB(k,btn){
+ state.b[k]=document.getElementById('obs'+k).value;
+ if(k==='B2') state.b.B2rt=document.getElementById('obsB2rt').value;
+ if(k==='B3') state.b.B3rt=document.getElementById('obsB3rt').value;
+ persist();
+ markSavedButton(btn,'Saved');
+}
+function saveField(id,btn){state[id]=document.getElementById(id).value;persist();markSavedButton(btn,'Saved')}
+function toggleHint(id){document.getElementById(id).classList.toggle('show')}
+function checkAnswer(el,correct,id){document.querySelectorAll('#'+id).forEach(()=>{}); const box=el.parentElement; box.querySelectorAll('.check-option').forEach(x=>x.classList.remove('correct','incorrect')); el.classList.add(correct?'correct':'incorrect'); const f=document.getElementById(id); f.textContent=correct?'✓ Correct. At dynamic equilibrium, the forward and reverse reaction rates are equal.':'Not quite. Think about rates rather than equal concentrations.'; f.className='feedback show'}
+function calcVolume(){
+ const a=parseFloat(document.getElementById('initialBurette').value);
+ const b=parseFloat(document.getElementById('finalBurette').value);
+ state.calc.initial=isNaN(a)?'':a; state.calc.final=isNaN(b)?'':b;
+ const v=(!isNaN(a)&&!isNaN(b))?(b-a):null;
+ document.getElementById('waterVolume').textContent=v===null?'—':v.toFixed(2);
+ state.calc.volume=v===null?'':v.toFixed(2);
+ state.calc.finalVolume=(v===null)?'':(5+v).toFixed(4);
+ document.getElementById('finalVolumeDisplay').textContent=v===null?'—':(5+v).toFixed(4);
+ localStorage.setItem(KEY,JSON.stringify(state)); updateProgress(); updateReport();
+}
+function num(v){return parseFloat(v)}
+function nearly(a,b,tol=0.005){return Number.isFinite(a)&&Math.abs(a-b)<=Math.max(tol,Math.abs(b)*0.005)}
+function showHint(id){const el=document.getElementById(id);el.style.display=el.style.display==='none'?'block':'none'}
+function setFeedback(id,ok,msg){
+ const el=document.getElementById(id);
+ el.className='feedback '+(ok?'correct':'incorrect');
+ el.textContent=(ok?'✓ ':'✗ ')+msg;
+}
+function markInput(id,ok){
+ const el=document.getElementById(id);
+ el.classList.toggle('field-correct',ok);
+ el.classList.toggle('field-incorrect',!ok);
+}
+function checkVolume(btn){
+ const a=num(document.getElementById('initialBurette').value), b=num(document.getElementById('finalBurette').value);
+ if(!Number.isFinite(a)||!Number.isFinite(b)||b<a){setFeedback('volumeFeedback',false,'Enter valid readings where the final reading is greater than the initial reading.');return}
+ const v=b-a;
+ state.calc.volume=v.toFixed(2); state.calc.volumeChecked=true; state.calc.finalVolume=(5+v).toFixed(4);
+ document.getElementById('waterVolume').textContent=v.toFixed(2);
+ document.getElementById('finalVolumeDisplay').textContent=(5+v).toFixed(4);
+ setFeedback('volumeFeedback',true,'Correct. The volume of water added has been calculated.');
+ markSavedButton(btn,'Checked');
+ persist();
+}
+function checkFinalVolume(btn){
+ const v=num(state.calc.volume), expected=5+v;
+ if(!Number.isFinite(v)){setFeedback('finalVolumeFeedback',false,'Complete and check Step 1 first.');return}
+ state.calc.finalVolume=expected.toFixed(4);state.calc.finalVolumeChecked=true;
+ document.getElementById('finalVolumeDisplay').textContent=expected.toFixed(4);
+ setFeedback('finalVolumeFeedback',true,'Correct. The final volume is 5.00 mL plus the volume of water added.');
+ markSavedButton(btn,'Confirmed');
+ persist();
+}
+function checkConcentrations(btn){
+ const vf=num(state.calc.finalVolume), h=num(document.getElementById('calcHCl').value), sb=num(document.getElementById('calcSbCl3').value);
+ if(!Number.isFinite(vf)){setFeedback('concFeedback',false,'Complete the final-volume step first.');return}
+ const eh=30/vf, es=2.5/vf;
+ const hok=nearly(h,eh), sok=nearly(sb,es);
+ markInput('calcHCl',hok); markInput('calcSbCl3',sok);
+ setFeedback('hclFeedback',hok,'[HCl]eq is '+eh.toFixed(4)+' M.');
+ setFeedback('sbcl3Feedback',sok,'[SbCl3]eq is '+es.toFixed(4)+' M.');
+ const ok=hok&&sok;
+ if(ok){state.calc.hcl=h;state.calc.sbcl3=sb;state.calc.concentrationsChecked=true;setFeedback('concFeedback',true,'Both equilibrium concentrations are correct.');markSavedButton(btn,'Checked');}
+ else{setFeedback('concFeedback',false,'Check the dilution calculation and try again.')}
+ persist();
+}
+function checkKc(btn){
+ const h=num(document.getElementById('calcHCl').value), sb=num(document.getElementById('calcSbCl3').value), k=num(document.getElementById('calcKc').value);
+ const expected=(h*h)/sb;
+ const ok=Number.isFinite(h)&&Number.isFinite(sb)&&Number.isFinite(k)&&nearly(k,expected,0.01);
+ markInput('calcKc',ok);
+ state.calc.hcl=document.getElementById('calcHCl').value;
+ state.calc.sbcl3=document.getElementById('calcSbCl3').value;
+ state.calc.kc=document.getElementById('calcKc').value;
+ state.calc.working=document.getElementById('calcWorking').value;
+ if(ok){state.calc.kcChecked=true;setFeedback('kcFeedback',true,'Correct. Kc = '+expected.toFixed(4)+'.');markSavedButton(btn,'Checked');}
+ else{setFeedback('kcFeedback',false,'Check Kc = [HCl]² / [SbCl3].');}
+ persist();
+}
+function saveC(btn){
+ state.calc.hcl=document.getElementById('calcHCl').value;
+ state.calc.sbcl3=document.getElementById('calcSbCl3').value;
+ state.calc.kc=document.getElementById('calcKc').value;
+ state.calc.working=document.getElementById('calcWorking').value;
+ persist();
+ markSavedButton(btn,'Saved');
+}
+function saveStudent(btn){
+ state.meta.name=document.getElementById('studentName').value;
+ state.meta.matrix=document.getElementById('matrixNo').value;
+ state.meta.group=document.getElementById('studentGroup').value;
+ state.meta.date=document.getElementById('reportDate').value;
+ persist();
+ markSavedButton(btn,'Saved');
+}
+function updateProgress(){
+ const checks=[
+  state.steps.a1,state.steps.a2,state.obs.A1,state.obs.A2,state.obs.A3,
+  state.steps.bprep,state.b.B1,state.b.B2,state.b.B3,state.discussionB,
+  state.calc.volumeChecked,state.calc.finalVolumeChecked,state.calc.concentrationsChecked,state.calc.kcChecked,state.discussionC,state.conclusion
+ ];
+ const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+ document.getElementById('progressText').textContent=pct+'%';
+ document.getElementById('progressBar').style.width=pct+'%';
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function updateReport(){
+ const s=state;
+ const procA=[
+ '2 mL of 0.1 M Fe(NO₃)₃ solution and 3 mL of 0.1 M KSCN solution were placed into a 100 mL beaker.',
+ '50 mL of distilled water was added to reduce the intensity of the solution.',
+ 'Approximately 5 mL of the solution was placed into each of four test tubes.',
+ '1 mL of 0.1 M Fe(NO₃)₃ solution was added to test tube I, 1 mL of 0.1 M KSCN solution was added to test tube II, and 6–8 drops of NaOH solution were added to test tube III. Test tube IV was used as a control.'
+ ];
+ const procB=[
+ '2 mL of 0.2 M CoCl₂ solution was placed into a conical flask.',
+ '20 mL of 6 M HCl was added and the flask was swirled.',
+ 'The resulting purple solution was divided into three test tubes.',
+ 'One test tube was kept at room temperature, one was placed in an ice bath, and one was placed in a water bath at 80–90 °C.',
+ 'The treated test tubes were returned to room temperature and the colour changes were observed.'
+ ];
+ const procC=[
+ '5.0 mL of 0.5 M SbCl₃ in 6 M HCl was pipetted into a conical flask.',
+ 'Distilled water was carefully added from a burette while the flask was swirled until a faint white precipitate was obtained.',
+ 'The initial and final burette readings were recorded and the volume of water added was calculated.'
+ ];
+ const obs=(k)=>esc(s.obs[k]||'—');
+ const b=(k)=>esc(s.b[k]||'—');
+ const html=`
+ <h1>Experiment 5: Chemical Equilibrium</h1>
+ <p><strong>Name:</strong> ${esc(s.meta.name||'—')} &nbsp; <strong>Matrix No.:</strong> ${esc(s.meta.matrix||'—')}</p>
+ <p><strong>Group:</strong> ${esc(s.meta.group||'—')} &nbsp; <strong>Date:</strong> ${esc(s.meta.date||'—')}</p>
+ <h2>1. Title</h2><p>Experiment 5: Chemical Equilibrium</p>
+ <h2>2. Objectives</h2>
+ <ol><li>To study the effect of concentration and temperature on chemical equilibrium.</li><li>To determine the equilibrium constant, K<sub>c</sub>, of a reaction.</li></ol>
+ <h2>3. Introduction</h2>
+ <p>Chemical equilibrium is established in a reversible reaction when the rates of the forward and reverse reactions are equal. At equilibrium, the concentrations of the reactants and products remain constant. The equilibrium position can be affected by changes in concentration and temperature. According to Le Chatelier's Principle, the equilibrium position shifts in a direction that reduces the effect of an imposed change. In this experiment, the effects of concentration and temperature on chemical equilibrium were investigated. The equilibrium constant, K<sub>c</sub>, was also determined for a heterogeneous equilibrium system.</p>
+ <h2>4. Procedure</h2>
+ <h3>A. Effect of concentration</h3><ol>${procA.map(x=>'<li>'+x+'</li>').join('')}</ol>
+ <h3>B. Effect of temperature</h3><ol>${procB.map(x=>'<li>'+x+'</li>').join('')}</ol>
+ <h3>C. Determination of equilibrium constant</h3><ol>${procC.map(x=>'<li>'+x+'</li>').join('')}</ol>
+ <h2>5. Results</h2>
+ <h3>A. Effect of concentration</h3>
+ <div class="table-wrap"><table><tr><th>Test tube</th><th>Treatment</th><th>Observation</th></tr>
+ <tr><td>I</td><td>+ 1 mL 0.1 M Fe(NO₃)₃</td><td>${obs('A1')}</td></tr>
+ <tr><td>II</td><td>+ 1 mL 0.1 M KSCN</td><td>${obs('A2')}</td></tr>
+ <tr><td>III</td><td>+ 6–8 drops NaOH</td><td>${obs('A3')}</td></tr></table></div>
+ <h3>B. Effect of temperature</h3>
+ <div class="table-wrap"><table><tr><th>Test tube</th><th>Condition</th><th>Observation</th><th>After RT</th></tr>
+ <tr><td>I</td><td>Room temperature</td><td>${b('B1')}</td><td>—</td></tr>
+ <tr><td>II</td><td>Ice bath</td><td>${b('B2')}</td><td>${b('B2rt')}</td></tr>
+ <tr><td>III</td><td>80–90 °C</td><td>${b('B3')}</td><td>${b('B3rt')}</td></tr></table></div>
+ <h3>C. Determination of K<sub>c</sub></h3>
+ <div class="table-wrap"><table><tr><th>Measurement</th><th>Result</th></tr>
+ <tr><td>Initial burette reading / mL</td><td>${esc(s.calc.initial||'—')}</td></tr>
+ <tr><td>Final burette reading / mL</td><td>${esc(s.calc.final||'—')}</td></tr>
+ <tr><td>Volume of water added / mL</td><td>${esc(s.calc.volume||'—')}</td></tr>
+ <tr><td>Final volume of solution / mL</td><td>${esc(s.calc.finalVolume||'—')}</td></tr></table></div>
+ <h2>6. Calculations</h2>
+ <p><strong>Equilibrium expression:</strong> K<sub>c</sub> = [HCl]² / [SbCl₃]</p>
+ <p><strong>[HCl] at equilibrium:</strong> ${esc(s.calc.hcl||'—')} M</p>
+ <p><strong>[SbCl₃] at equilibrium:</strong> ${esc(s.calc.sbcl3||'—')} M</p>
+ <p><strong>K<sub>c</sub>:</strong> ${esc(s.calc.kc||'—')}</p>
+ <p><strong>Working:</strong><br>${esc(s.calc.working||'—').replace(/\n/g,'<br>')}</p>
+ <h2>7. Discussions</h2>
+ <h3>7.1 Effect of concentration</h3>
+ <p><strong>Test I:</strong> ${esc(s.int.A1||'—')}</p><p><strong>Test II:</strong> ${esc(s.int.A2||'—')}</p><p><strong>Test III:</strong> ${esc(s.int.A3||'—')}</p>
+ <h3>7.2 Effect of temperature</h3><p><strong>Evidence:</strong> ${esc(s.evidenceB||'—').replace(/\n/g,'<br>')}</p><p>${esc(s.discussionB||'—').replace(/\n/g,'<br>')}</p>
+ <h3>7.3 Equilibrium constant</h3><p>${esc(s.discussionC||'—').replace(/\n/g,'<br>')}</p>
+ <h2>8. Conclusion</h2><p>${esc(s.conclusion||'—').replace(/\n/g,'<br>')}</p>`;
+ document.getElementById('reportPreview').innerHTML=html;
+}
+function xmlEsc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;')}
+function crc32(bytes){let c=0xFFFFFFFF;for(let i=0;i<bytes.length;i++){c^=bytes[i];for(let k=0;k<8;k++)c=(c>>>1)^((c&1)?0xEDB88320:0)}return (c^0xFFFFFFFF)>>>0}
+function u16(n){return new Uint8Array([n&255,(n>>>8)&255])}
+function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
+function concatBytes(parts){let total=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(total),o=0;for(const p of parts){out.set(p,o);o+=p.length}return out}
+function makeZip(files){
+ const enc=new TextEncoder(),local=[],central=[];let offset=0;
+ const now=new Date(), dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|Math.floor(now.getSeconds()/2), dosDate=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+ for(const f of files){const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+  const lh=concatBytes([new Uint8Array([0x50,0x4b,0x03,0x04]),u16(20),u16(0),u16(0),u16(dosTime),u16(dosDate),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data]); local.push(lh);
+  const ch=concatBytes([new Uint8Array([0x50,0x4b,0x01,0x02]),u16(20),u16(20),u16(0),u16(0),u16(dosTime),u16(dosDate),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]); central.push(ch);offset+=lh.length;
+ }
+ const cd=concatBytes(central), body=concatBytes(local); const eocd=concatBytes([new Uint8Array([0x50,0x4b,0x05,0x06]),u16(0),u16(0),u16(files.length),u16(files.length),u32(cd.length),u32(body.length),u16(0)]);
+ return new Blob([body,cd,eocd],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+function wText(text,bold=false){return `<w:r>${bold?'<w:rPr><w:b/></w:rPr>':''}<w:t xml:space="preserve">${xmlEsc(text)}</w:t></w:r>`}
+function wPara(text='',opts={}){const ppr=[];if(opts.style)ppr.push(`<w:pStyle w:val="${opts.style}"/>`);if(opts.align)ppr.push(`<w:jc w:val="${opts.align}"/>`);const runs=String(text??'').split('\n').map((x,i)=>wText(x)+(i<String(text??'').split('\n').length-1?'<w:br/>':''));return `<w:p>${ppr.length?`<w:pPr>${ppr.join('')}</w:pPr>`:''}${runs.join('')}</w:p>`}
+function wTable(rows){return `<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4"/><w:left w:val="single" w:sz="4"/><w:bottom w:val="single" w:sz="4"/><w:right w:val="single" w:sz="4"/><w:insideH w:val="single" w:sz="4"/><w:insideV w:val="single" w:sz="4"/></w:tblBorders></w:tblPr>${rows.map((r,ri)=>`<w:tr>${r.map(c=>`<w:tc><w:tcPr><w:tcW w:w="2400" w:type="dxa"/></w:tcPr>${wPara(c,{bold:ri===0})}</w:tc>`).join('')}</w:tr>`).join('')}</w:tbl>`}
+function wHeading(text,level=1){return wPara(text,{style:level===1?'Heading1':'Heading2'})}
+function buildDocumentXml(s){
+ const C=[]; C.push(wPara('EXPERIMENT 5: CHEMICAL EQUILIBRIUM',{style:'Title'}));
+ C.push(wPara(`Name: ${s.meta.name||'________________'}    Matrix No.: ${s.meta.matrix||'________________'}`));
+ C.push(wPara(`Group: ${s.meta.group||'________________'}    Date: ${s.meta.date||'________________'}`));
+ C.push(wHeading('1. Title')); C.push(wPara('Experiment 5: Chemical Equilibrium'));
+ C.push(wHeading('2. Objectives')); C.push(wPara('1. To study the effect of concentration and temperature on chemical equilibrium.')); C.push(wPara('2. To determine the equilibrium constant, Kc, of a reaction.'));
+ C.push(wHeading('3. Introduction')); C.push(wPara('Chemical equilibrium is established in a reversible reaction when the rates of the forward and reverse reactions are equal. At equilibrium, the concentrations of the reactants and products remain constant. The equilibrium position can be affected by changes in concentration and temperature. According to Le Chatelier’s Principle, the equilibrium position shifts in a direction that reduces the effect of an imposed change. In this experiment, the effects of concentration and temperature on chemical equilibrium were investigated. The equilibrium constant, Kc, was also determined for a heterogeneous equilibrium system.'));
+ C.push(wHeading('4. Procedure')); ['A. Effect of concentration','B. Effect of temperature','C. Determination of equilibrium constant'].forEach(x=>C.push(wHeading(x,2)));
+ ['2 mL of 0.1 M Fe(NO3)3 solution and 3 mL of 0.1 M KSCN solution were placed into a 100 mL beaker. 50 mL of distilled water was added. Approximately 5 mL of the solution was placed into each of four test tubes. Fe(NO3)3, KSCN and NaOH solutions were added to the designated test tubes and the observations were recorded.','2 mL of 0.2 M CoCl2 solution was placed into a conical flask. 20 mL of 6 M HCl was added and the flask was swirled. The purple solution was divided into three test tubes. The test tubes were kept at room temperature, in an ice bath, and in a water bath at 80–90 °C, respectively. The treated solutions were then returned to room temperature and the colour changes were observed.','5.0 mL of 0.5 M SbCl3 in 6 M HCl was pipetted into a conical flask. Distilled water was carefully added from a burette while the flask was swirled until a faint white precipitate was obtained. The burette readings were recorded and the volume of water added was calculated.'].forEach(x=>C.push(wPara(x)));
+ C.push(wHeading('5. Results')); C.push(wHeading('A. Effect of concentration',2)); C.push(wTable([['Test tube','Treatment','Observation'],['I','+ 1 mL 0.1 M Fe(NO3)3',s.obs.A1||''],['II','+ 1 mL 0.1 M KSCN',s.obs.A2||''],['III','+ 6–8 drops NaOH',s.obs.A3||'']]));
+ C.push(wHeading('B. Effect of temperature',2)); C.push(wTable([['Test tube','Condition','Observation','After RT'],['I','Room temperature',s.b.B1||'','—'],['II','Ice bath',s.b.B2||'',s.b.B2rt||''],['III','80–90 °C',s.b.B3||'',s.b.B3rt||'']]));
+ C.push(wHeading('C. Determination of Kc',2)); C.push(wTable([['Measurement','Result'],['Initial burette reading / mL',s.calc.initial||''],['Final burette reading / mL',s.calc.final||''],['Volume of water added / mL',s.calc.volume||''],['Final volume of solution / mL',s.calc.finalVolume||'']]));
+ C.push(wHeading('6. Calculations')); C.push(wPara('Kc = [HCl]² / [SbCl3]')); C.push(wPara(`[HCl] at equilibrium: ${s.calc.hcl||'—'}`)); C.push(wPara(`[SbCl3] at equilibrium: ${s.calc.sbcl3||'—'}`)); C.push(wPara(`Kc: ${s.calc.kc||'—'}`)); C.push(wPara(`Working: ${s.calc.working||'—'}`));
+ C.push(wHeading('7. Discussions')); C.push(wPara(`7.1 Effect of concentration — Test I: ${s.int.A1||'—'} Test II: ${s.int.A2||'—'} Test III: ${s.int.A3||'—'}`)); C.push(wPara(`7.2 Effect of temperature — Evidence: ${s.evidenceB||'—'} Discussion: ${s.discussionB||'—'}`)); C.push(wPara(`7.3 Equilibrium constant: ${s.discussionC||'—'}`));
+ C.push(wHeading('8. Conclusion')); C.push(wPara(s.conclusion||'—'));
+ return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${C.join('')}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>`;
+}
+function downloadDocx(){
+ const btn=document.querySelector('button[onclick="downloadDocx()"]'); if(btn){btn.disabled=true;btn.textContent='⏳ Preparing DOCX…'}
+ try{
+  const s=state;
+  const files=[
+   {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`},
+   {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`},
+   {name:'word/_rels/document.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`},
+   {name:'word/styles.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:sz w:val="22"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:pPr><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:rPr><w:b/><w:sz w:val="28"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:rPr><w:b/><w:sz w:val="24"/></w:rPr></w:style></w:styles>`},
+   {name:'word/document.xml',data:buildDocumentXml(s)}
+  ];
+  const blob=makeZip(files); const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Experiment_5_Chemical_Equilibrium_Lab_Report.docx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);showToast('DOCX generated successfully');
+ }catch(e){console.error(e);showToast('DOCX generation failed. Please try again.')}finally{if(btn){btn.disabled=false;btn.textContent='📄 Generate DOCX'}}
+}
+
+function load(){
+ document.getElementById('studentName').value=state.meta.name||'';
+ document.getElementById('matrixNo').value=state.meta.matrix||'';
+ document.getElementById('studentGroup').value=state.meta.group||'';
+ document.getElementById('reportDate').value=state.meta.date||new Date().toISOString().slice(0,10);
+ ['discussionB','discussionC','conclusion','evidenceB'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=state[id]||''});
+ ['A1','A2','A3'].forEach(k=>{document.getElementById('obs'+k).value=state.obs[k]||'';document.getElementById('int'+k).value=state.int[k]||''});
+ ['B1','B2','B3'].forEach(k=>document.getElementById('obs'+k).value=state.b[k]||'');
+ document.getElementById('obsB2rt').value=state.b.B2rt||''; document.getElementById('obsB3rt').value=state.b.B3rt||'';
+ document.getElementById('initialBurette').value=state.calc.initial||''; document.getElementById('finalBurette').value=state.calc.final||'';
+ document.getElementById('calcHCl').value=state.calc.hcl||''; document.getElementById('calcSbCl3').value=state.calc.sbcl3||''; document.getElementById('calcKc').value=state.calc.kc||''; document.getElementById('calcWorking').value=state.calc.working||'';
+ if(state.calc.volume){document.getElementById('waterVolume').textContent=state.calc.volume+' mL';}
+ if(state.calc.finalVolume){document.getElementById('finalVolumeDisplay').textContent=state.calc.finalVolume+' mL';}
+ if(state.calc.volumeChecked){document.getElementById('volumeFeedback').innerHTML='<div class="feedback correct">✓ Volume calculation previously checked.</div>';}
+ if(state.calc.finalVolumeChecked){document.getElementById('finalVolumeFeedback').innerHTML='<div class="feedback correct">✓ Final volume previously confirmed.</div>';}
+ if(state.calc.concentrationsChecked){document.getElementById('concFeedback').innerHTML='<div class="feedback correct">✓ Concentrations previously checked.</div>';markInput('calcHCl',true);markInput('calcSbCl3',true);}
+ if(state.calc.kcChecked){document.getElementById('kcFeedback').innerHTML='<div class="feedback correct">✓ Kc calculation previously checked.</div>';markInput('calcKc',true);}
+ Object.entries(state.choices).forEach(([key,val])=>document.querySelectorAll(`[data-choice="${key}"] .choice`).forEach(x=>{if(x.textContent.trim()===val)x.classList.add('selected')}));
+ updateProgress();updateReport();
+ document.querySelectorAll('#partA .btn-success,#partB .btn-success,#partC .btn-success').forEach(btn=>{
+   const id=btn.id;
+   const map={cStep1Btn:'c1',cStep2Btn:'c2',cStep3Btn:'c3',cStep4Btn:'c4',cStep5Btn:'c5'};
+   if(map[id] && state.steps[map[id]]){btn.classList.add('btn-saved');btn.textContent='✓ Completed';}
+ });
+}
+function resetApp(){if(confirm('Reset all experiment entries on this device?')){localStorage.removeItem(KEY);location.reload()}}
+load();
+</script>
+</body>
+</html>
