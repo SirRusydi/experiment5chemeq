@@ -87,6 +87,19 @@ th{background:#F1F4F7}
 .report-preview{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;min-height:300px}
 .report-preview h1,.report-preview h2{color:var(--navy)}
 .footer-note{text-align:center;color:var(--muted);font-size:.82rem;margin-top:30px}
+.procedure-visual{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.visual-card{background:linear-gradient(180deg,#fff,#f8fbff);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;box-shadow:0 5px 16px rgba(22,50,79,.05)}
+.visual-card img{width:100%;height:145px;object-fit:contain;display:block;margin:auto}
+.visual-card h4{margin:5px 0 2px;color:var(--navy)}
+.visual-card p{margin:0;font-size:.82rem;color:var(--muted)}
+.procedure-step{display:grid;grid-template-columns:190px 1fr;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.procedure-step:last-child{border-bottom:0}
+.procedure-step img{width:100%;height:150px;object-fit:contain;background:#f7fbff;border-radius:14px;border:1px solid #e5eaf0}
+.procedure-step .step-content{min-width:0}
+.visual-label{display:inline-flex;align-items:center;border-radius:999px;background:#eaf2f8;color:var(--navy);padding:4px 9px;font-size:.75rem;font-weight:800;margin-bottom:5px}
+@media(max-width:900px){.procedure-visual{grid-template-columns:repeat(2,minmax(0,1fr))}.procedure-step{grid-template-columns:150px 1fr}.procedure-step img{height:130px}}
+@media(max-width:600px){.procedure-visual{grid-template-columns:1fr}.procedure-step{grid-template-columns:1fr}.procedure-step img{height:170px}.visual-card img{height:170px}}
+
 .hint{background:#F4F8FF;border:1px solid #C9DDF1;border-radius:14px;padding:12px 14px;margin-top:10px;display:none}.hint.show{display:block}.hint strong{color:var(--navy)}
 .check-options{display:grid;gap:8px}.check-option{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;text-align:left}.check-option.correct{border-color:#9AD3B5;background:#F2FBF6}.check-option.incorrect{border-color:#E9A5A5;background:#FFF5F5}
 .feedback{margin-top:10px;font-weight:700;display:none}.feedback.show{display:block}
@@ -144,7 +157,7 @@ th{background:#F1F4F7}
   </div>
 
   <section id="home" class="view active">
-    <div class="section-title"><h2>Start here</h2><span class="badge">V1 Student Mode</span></div>
+    <div class="section-title"><h2>Start here</h2><span class="badge">V6 Visual Lab</span></div>
     <div class="grid">
       <div class="card">
         <h3>🎯 Objectives</h3>
@@ -195,14 +208,24 @@ th{background:#F1F4F7}
       <h3>Step A1 — Prepare the equilibrium mixture</h3>
       <p>Place <strong>2 mL of 0.1 M Fe(NO<sub>3</sub>)<sub>3</sub></strong> solution and <strong>3 mL of 0.1 M KSCN</strong> solution into a 100 mL beaker.</p>
       <p>Then add <strong>50 mL distilled water</strong> and mix.</p>
-      <button class="btn btn-success" onclick="completeStepButton('a1',this)">✓ Step completed</button>
+      <button class="btn btn-success" onclick="completeStepButton('a1',this)">Step completed</button>
     </div>
 
     <div class="card">
       <h3>Step A2 — Divide the mixture</h3>
       <p>Place approximately <strong>5 mL</strong> of the solution into each of four test tubes.</p>
       <p class="muted small">Test tube IV is the control.</p>
-      <button class="btn btn-success" onclick="completeStepButton('a2',this)">✓ Step completed</button>
+      <button class="btn btn-success" onclick="completeStepButton('a2',this)">Step completed</button>
+    </div>
+
+    <div class="section-title"><h2>🔬 Visual procedure guide</h2><span class="badge">Watch the setup</span></div>
+    <div class="card">
+      <p class="muted small">Use the illustrations as a visual reminder of the experimental sequence. Follow the supplied manual for exact quantities and handling.</p>
+      <div class="procedure-visual">
+        <div class="visual-card"><img src="assets/procedure/a-prep.png" alt="Preparing three test tubes"><h4>Prepare samples</h4><p>Place <strong>2 mL of 0.1 M Fe(NO<sub>3</sub>)<sub>3</sub></strong> solution and <strong>3 mL of 0.1 M KSCN</strong> solution into a 100 mL beaker.</p></div>
+        <div class="visual-card"><img src="assets/procedure/a-test.png" alt="Three test tubes receiving treatments"><h4>Add water</h4><p>Then add <strong>50 mL distilled water</strong></p></div>
+        <div class="visual-card"><img src="assets/procedure/a-divide.png" alt="Observation of visible change"><h4>Divide the solution</h4><p>Place approximately <strong>5 mL</strong> of the solution into each of four test tubes and add treatment.</p></div>
+             </div>
     </div>
 
     <div class="section-title"><h2>Observe and interpret</h2></div>
@@ -262,24 +285,30 @@ th{background:#F1F4F7}
     </div>
 
     <div class="card">
-      <h3>Prepare the temperature system</h3>
-      <ol>
-        <li>Place 2 mL of 0.2 M CoCl<sub>2</sub> solution into a conical flask.</li>
-        <li>Add 20 mL of 6 M HCl and swirl.</li>
-        <li>A purple solution should form, indicating a mixture of pink and blue species.</li>
-        <li>Divide the purple solution into three test tubes.</li>
-      </ol>
-      <button class="btn btn-success" onclick="completeStepButton('bprep',this)">✓ Preparation completed</button>
+      <div class="section-title"><h2>🔬 Visual procedure guide</h2><span class="badge">Watch the setup</span></div>
+    <div class="card">
+      <p class="muted small">Use the illustrations as a visual reminder of the experimental sequence. Follow the supplied manual for exact quantities and handling.</p>
+      <div class="procedure-visual">
+        <div class="visual-card"><img src="assets/procedure/b-prep.png" alt="Preparing three test tubes"><h4>Step 1</h4><p>Place 2 mL of 0.2 M CoCl<sub>2</sub> solution into a conical flask.</p></div>
+        <div class="visual-card"><img src="assets/procedure/b-prep2.png" alt="Three test tubes receiving treatments"><h4>Step 2</h4><p>Add 20 mL of 6 M HCl and swirl.</strong></p></div>
+        <div class="visual-card"><img src="assets/procedure/b-prep3.png" alt="Observation of visible change"><h4>Step 3</h4><p>A purple solution should form, indicating a mixture of pink and blue species.</p></div>
+	<div class="visual-card"><img src="assets/procedure/b-prep4.png" alt="Observation of visible change"><h4>Step 4</h4><p>Divide the purple solution into three test tubes.</p></div>
+
+          <button class="btn btn-success" onclick="completeStepButton('bprep',this)">✓ Preparation completed</button>
+        </div>
+      </div>
     </div>
 
     <div class="grid">
       <div class="card">
+        <img src="assets/procedure/b-temperature1.png" alt="Temperature comparison setup" style="width:100%;height:150px;object-fit:contain;border-radius:14px;background:#f7fbff;margin-bottom:8px">
         <h3>🌡️ Test tube I</h3>
         <p>Leave at room temperature.</p>
         <textarea id="obsB1" placeholder="Observation..."></textarea>
         <button class="btn btn-primary" onclick="saveB('B1',this)">Save</button>
       </div>
       <div class="card">
+        <img src="assets/procedure/b-temperature2.png" alt="Ice bath temperature setup" style="width:100%;height:150px;object-fit:contain;border-radius:14px;background:#f7fbff;margin-bottom:8px">
         <h3>❄️ Test tube II</h3>
         <p>Place in an ice bath.</p>
         <textarea id="obsB2" placeholder="Observation at low temperature..."></textarea>
@@ -287,6 +316,7 @@ th{background:#F1F4F7}
         <button class="btn btn-primary" onclick="saveB('B2',this)">Save</button>
       </div>
       <div class="card">
+        <img src="assets/procedure/b-temperature3.png" alt="Hot water bath temperature setup" style="width:100%;height:150px;object-fit:contain;border-radius:14px;background:#f7fbff;margin-bottom:8px">
         <h3>🔥 Test tube III</h3>
         <p>Place in a water bath at 80–90 °C.</p>
         <textarea id="obsB3" placeholder="Observation at high temperature..."></textarea>
@@ -322,42 +352,56 @@ th{background:#F1F4F7}
 
     <div class="card">
       <h3>🧪 Step-by-step experimental procedure</h3>
-      <p class="muted small">Complete each laboratory step before moving to the calculation. The procedure follows the supplied Experiment 5 manual.</p>
+      <p class="muted small">The illustrations provide a visual guide to the sequence. Complete each laboratory step before moving to the calculation.</p>
 
-      <div class="step">
-        <div class="step-no">1</div>
-        <div>
+      <div class="procedure-step">
+        <img src="assets/procedure/c1-transfer.png" alt="Transfer SbCl3 solution into a conical flask">
+        <div class="step-content">
+          <span class="visual-label">Step 1</span>
           <strong>Transfer the SbCl<sub>3</sub> solution</strong>
           <p>Using a pipette, transfer <strong>5.0 mL of 0.5 M SbCl<sub>3</sub> in 6 M HCl</strong> into a conical flask.</p>
           <button id="cStep1Btn" class="btn btn-success" onclick="completeStepButton('c1',this)">Step completed</button>
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-no">2</div>
-        <div>
-          <strong>Add distilled water</strong>
-          <p>Carefully add distilled water from a burette into the conical flask while the flask is swirled.</p>
+      <div class="procedure-step">
+        <img src="assets/procedure/c2-burette.png" alt="Burette containing distilled water">
+        <div class="step-content">
+          <span class="visual-label">Step 2</span>
+          <strong>Prepare the burette</strong>
+          <p>Fill the burette with distilled water and record the initial burette reading.</p>
           <button id="cStep2Btn" class="btn btn-success" onclick="completeStepButton('c2',this)">Step completed</button>
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-no">3</div>
-        <div>
-          <strong>Identify the endpoint</strong>
-          <p>Continue adding distilled water until a <strong>faint white precipitate</strong> is obtained.</p>
-          <div class="callout"><strong>Observation cue:</strong> the endpoint is the appearance of a faint white precipitate.</div>
+      <div class="procedure-step">
+        <img src="assets/procedure/c3-add-water.png" alt="Adding distilled water while swirling the flask">
+        <div class="step-content">
+          <span class="visual-label">Step 3</span>
+          <strong>Add distilled water and swirl</strong>
+          <p>Carefully add distilled water from the burette while the conical flask is continuously swirled.</p>
           <button id="cStep3Btn" class="btn btn-success" onclick="completeStepButton('c3',this)">Step completed</button>
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-no">4</div>
-        <div>
-          <strong>Record the burette readings</strong>
-          <p>Record the initial and final burette readings below.</p>
+      <div class="procedure-step">
+        <img src="assets/procedure/c4-endpoint.png" alt="Faint white precipitate endpoint">
+        <div class="step-content">
+          <span class="visual-label">Step 4</span>
+          <strong>Identify the endpoint</strong>
+          <p>Continue adding distilled water until a <strong>faint white precipitate</strong> is obtained.</p>
+          <div class="callout"><strong>Observation cue:</strong> stop when the solution just becomes cloudy with a faint white precipitate.</div>
           <button id="cStep4Btn" class="btn btn-success" onclick="completeStepButton('c4',this)">Step completed</button>
+        </div>
+      </div>
+
+      <div class="procedure-step">
+        <img src="assets/procedure/c5-reading.png" alt="Reading the final burette reading at eye level">
+        <div class="step-content">
+          <span class="visual-label">Step 5</span>
+          <strong>Record the burette readings</strong>
+          <p>Record the final burette reading, then calculate the volume of water added from the initial and final readings.</p>
+          <button id="cStep5Btn" class="btn btn-success" onclick="completeStepButton('c5',this)">Step completed</button>
         </div>
       </div>
     </div>
@@ -769,6 +813,7 @@ function load(){
  });
 }
 function resetApp(){if(confirm('Reset all experiment entries on this device?')){localStorage.removeItem(KEY);location.reload()}}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 load();
 </script>
 </body>
